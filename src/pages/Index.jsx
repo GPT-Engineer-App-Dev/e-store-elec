@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Heading, Text, VStack, Image, Link, Input } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, Text, VStack, Image, Link, Input, Select } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
 
@@ -8,34 +8,45 @@ const sampleProducts = [
     name: "Smartphone",
     description: "Latest model with all the new features.",
     price: "$699",
-    imageUrl: "https://via.placeholder.com/150"
+    imageUrl: "https://via.placeholder.com/150",
+    category: "Mobile"
   },
   {
     id: 2,
     name: "Laptop",
     description: "High performance laptop for all your needs.",
     price: "$999",
-    imageUrl: "https://via.placeholder.com/150"
+    imageUrl: "https://via.placeholder.com/150",
+    category: "Computers"
   },
   {
     id: 3,
     name: "Smartwatch",
     description: "Keep track of your health and notifications.",
     price: "$199",
-    imageUrl: "https://via.placeholder.com/150"
+    imageUrl: "https://via.placeholder.com/150",
+    category: "Wearables"
   }
 ];
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
+  const categories = [...new Set(sampleProducts.map(product => product.category))];
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+
   const filteredProducts = sampleProducts.filter(product =>
-    product.name.toLowerCase().includes(searchQuery) ||
-    product.description.toLowerCase().includes(searchQuery)
+    (selectedCategory === "" || product.category === selectedCategory) &&
+    (product.name.toLowerCase().includes(searchQuery) ||
+     product.description.toLowerCase().includes(searchQuery))
   );
 
   return (
@@ -51,6 +62,12 @@ const Index = () => {
       <VStack spacing={8} mt={8}>
         <Heading>Welcome to ElectroShop</Heading>
         <Text>Find the best electronics at unbeatable prices.</Text>
+        <Select placeholder="Select category" value={selectedCategory} onChange={handleCategoryChange} mb={4}>
+          {categories.map(category => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </Select>
+        
         <Input
           placeholder="Search for products..."
           value={searchQuery}
